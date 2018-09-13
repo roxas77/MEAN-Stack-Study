@@ -1,38 +1,36 @@
-// models/User.js
-
 var mongoose = require("mongoose");
-var bcrypt = require("bcrypt-nodejs"); // 1
+var bcrypt   = require("bcrypt-nodejs");
 
-// schema // 1
+// schema
 var userSchema = mongoose.Schema({
- username:{
-   type:String,
-   required:[true,"Username is required!"],
-   match:[/^.{4,12}$/,"Should be 4-12 characters!"],
-   trim:true,
-   unique:true
- },
- password:{
-   type:String,
-   required:[true,"Password is required!"],
-   select:false
- },
- name:{
-   type:String,
-   required:[true,"Name is required!"],
-   match:[/^.{4,12}$/,"Should be 4-12 characters!"],
-   trim:true
- },
- email:{
-   type:String,
-   match:[/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$/,"Should be a vaild email address!"],
-   trim:true
- }
+  username:{
+    type:String,
+    required:[true,"Username is required!"],
+    match:[/^.{4,12}$/,"Should be 4-12 characters!"],
+    trim:true,
+    unique:true
+  },
+  password:{
+    type:String,
+    required:[true,"Password is required!"],
+    select:false
+  },
+  name:{
+    type:String,
+    required:[true,"Name is required!"],
+    match:[/^.{4,12}$/,"Should be 4-12 characters!"],
+    trim:true
+  },
+  email:{
+    type:String,
+    match:[/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,"Should be a vaild email address!"],
+    trim:true
+  }
 },{
- toObject:{virtuals:true}
+  toObject:{virtuals:true}
 });
 
-// virtuals // 2
+// virtuals
 userSchema.virtual("passwordConfirmation")
 .get(function(){ return this._passwordConfirmation; })
 .set(function(value){ this._passwordConfirmation=value; });
@@ -49,7 +47,7 @@ userSchema.virtual("newPassword")
 .get(function(){ return this._newPassword; })
 .set(function(value){ this._newPassword=value; });
 
-// password validation // 2
+// password validation
 var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
 var passwordRegexErrorMessage = "Should be minimum 8 characters of alphabet and number combination!";
 userSchema.path("password").validate(function(v) {
@@ -83,21 +81,21 @@ userSchema.path("password").validate(function(v) {
   }
 });
 
-// hash password // 3
+// hash password
 userSchema.pre("save", function (next){
- var user = this;
- if(!user.isModified("password")){ // 3-1
-  return next();
- } else {
-  user.password = bcrypt.hashSync(user.password); // 3-2
-  return next();
- }
+  var user = this;
+  if(!user.isModified("password")){
+    return next();
+  } else {
+    user.password = bcrypt.hashSync(user.password);
+    return next();
+  }
 });
 
-// model methods // 4
+// model methods
 userSchema.methods.authenticate = function (password) {
- var user = this;
- return bcrypt.compareSync(password,user.password);
+  var user = this;
+  return bcrypt.compareSync(password,user.password);
 };
 
 // model & export
