@@ -27,6 +27,23 @@ util.getTime = function(dateObj){
   return get2digits(dateObj.getHours()) + ":" + get2digits(dateObj.getMinutes())+ ":" + get2digits(dateObj.getSeconds());
 }
 
+// util.js
+
+util.isLoggedin = function(req, res, next){
+ if(req.isAuthenticated()){
+  next();
+ } else {
+  req.flash("errors", {login:"Please login first"});
+  res.redirect("/login");
+ }
+}
+
+util.noPermission = function(req, res){
+ req.flash("errors", {login:"You don't have permission"});
+ req.logout();
+ res.redirect("/login");
+}
+
 module.exports = util;
 
 // private functions
