@@ -8,7 +8,10 @@ var bodyParser = require('body-parser');
 
 // Database
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGO_DB, {useNewUrlParser:true});
+//mongoose.connect(process.env.MONGO_DB, {useNewUrlParser:true});
+//mongoose.connect(process.env.MONGO_DB_LOCAL, {useNewUrlParser:true});
+mongoose.connect('mongodb://localhost:27017', {useNewUrlParser:true});
+
 var db = mongoose.connection;
 db.once('open', function () {
    console.log('DB connected!');
